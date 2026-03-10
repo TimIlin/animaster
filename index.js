@@ -24,6 +24,13 @@ function addListeners() {
             const block = document.getElementById('scaleBlock');
             animaster().scale(block, 1000, 1.25);
         });
+
+    document.getElementById('moveAndHidePlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('moveAndHideBlock');
+            animaster().moveAndHide(block, 1000, {x:100, y:20});
+        });
+    
     document.getElementById('showAndHidePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('showAndHideBlock');
@@ -70,6 +77,11 @@ function animaster(){
         scale(element, duration, ratio) {
             element.style.transitionDuration =  `${duration}ms`;
             element.style.transform = getTransform(null, ratio);
+        },
+
+        moveAndHide(element, duration, translation){
+            this.move(element, duration * 0.4, translation);
+            setTimeout(() => this.fadeOut(element,duration * 0.6),duration *0.4)
         },
 
         showAndHide(element, duration) {
