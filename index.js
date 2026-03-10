@@ -2,7 +2,8 @@ addListeners();
 
 function addListeners() {
     const anim = animaster();
-    let heartBeatingStopper = undefined;
+    let heartBeatingStopper;
+    let moveAndHideStopper;
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
@@ -30,7 +31,12 @@ function addListeners() {
     document.getElementById('moveAndHidePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveAndHideBlock');
-            anim.moveAndHide(block, 1000, {x:100, y:20});
+            moveAndHideStopper = anim.moveAndHide(block, 1000, {x:100, y:20});
+        });
+    document.getElementById('moveAndHideStop')
+        .addEventListener('click', function () {
+            moveAndHideStopper.stop()
+            moveAndHideStopper = undefined;
         });
     
     document.getElementById('showAndHidePlay')
@@ -46,11 +52,28 @@ function addListeners() {
     document.getElementById('heartBeatingStop')
         .addEventListener('click', function () {
             // const block = document.getElementById('heartBeatingBlock');
-            heartBeatingStopper.stop()
+            heartBeatingStopper.stop();
+            heartBeatingStopper = undefined;
         });
 }
 
 function animaster(){
+    const resetter = {
+        resetFadeIn(element){
+            element.style.transitionDuration = null;
+            element.style.show = null;
+            element.classList.add('hide');
+        },
+        resetFadeOut(element){
+            element.style.transitionDuration = null;
+            element.style.hide = null;
+            element.classList.add('show');
+        },
+        resetMoveAndScale(element){
+            element.style.transitionDuration = null;
+            element.style.transform = null;
+        }
+    }
     return {
         /**
          * Блок плавно появляется из прозрачного.
@@ -94,6 +117,13 @@ function animaster(){
         moveAndHide(element, duration, translation){
             this.move(element, duration * 0.4, translation);
             setTimeout(() => this.fadeOut(element,duration * 0.6),duration *0.4)
+            return{
+                stop(){
+                    console.log("stopping")
+                    resetter.resetMoveAndScale(element);
+                    resetter.resetFadeOut(element);
+                }
+            }
         },
 
         showAndHide(element, duration) {
