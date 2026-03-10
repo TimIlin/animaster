@@ -60,11 +60,13 @@ function addListeners() {
         .addEventListener('click', function () {
             const block = document.getElementById('superBlock');
             const customAnimation = animaster()
-                .addMove(2000, {x: 40, y: 40})
-                .addF
-                .addMove(1000, {x: 80, y: 0})
-                .addMove(2000, {x: 40, y: -40})
-                //.addMove(200, {x: 0, y: 0});
+            .addMove(2000, {x: 40, y: 40})
+            .addMove(1000, {x: 80, y: 0})
+            .addFadeOut(100)
+            .addMove(2000, {x: 40, y: -40})
+            .addFadeIn(1000)
+            .addMove(200, {x: 0, y: 0});
+
             superStopper = customAnimation.play(block);
         });
     document.getElementById('superStop')
@@ -176,6 +178,37 @@ function animaster(){
             return this;
         },
 
+        addScale(duration, ratio) {
+            steps.push({
+                func: function(element) {
+                    this.scale(element, duration, ratio)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        addFadeIn(duration) {
+            steps.push({
+                func: function(element) {
+                    this.fadeIn(element, duration)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        addFadeOut(duration) {
+            steps.push({
+                func: function(element) {
+                    this.fadeOut(element, duration)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+
         play(element) {
             //console.log(steps)
             const orig = element.cloneNode(true);
@@ -197,10 +230,10 @@ function animaster(){
                     }
                     resetter.resetMoveAndScale(element);
                     if (wasHidden) {
-                        resetter.resetFadeIn();
+                        resetter.resetFadeIn(element);
                     }
                     else {
-                        //resetter.resetFadeOut();
+                        resetter.resetFadeOut(element);
                     }
                 }
             }
