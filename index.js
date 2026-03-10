@@ -208,23 +208,44 @@ function animaster(){
             return this;
         },
 
+        addDelay(duration) {
+            steps.push({
+                func: function(element) {
+                    
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
 
-        play(element) {
+        play(element, cycled=false) {
             //console.log(steps)
             const orig = element.cloneNode(true);
             //const origStyles = structuredClone(element.style);
             const wasHidden = element.style.hide === null;
             const timeoutIds = [];
             let duration = 0;
+            let timerId;
             for (const step of steps) {
                 //console.log(duration)
                 timeoutIds.push(setTimeout(() => step.func(element), duration));
                 duration += step.duration;
             }
+            if (cycled) {
+                timerId = setInterval(() => {
+                    for (const step of steps) {
+                        //console.log(duration)
+                        timeoutIds.push(setTimeout(() => step.func(element), duration));
+                    }
+                }, duration)
+            }
             return {
                 stop() {
                     //element = orig;
                     //element.style = origStyles;
+                    if (timerId) {
+                        clearInterval(timerId)
+                    }
                     for (const timeoutId of timeoutIds) {
                         clearTimeout(timeoutId);
                     }
