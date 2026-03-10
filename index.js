@@ -61,6 +61,7 @@ function addListeners() {
             const block = document.getElementById('superBlock');
             const customAnimation = animaster()
                 .addMove(2000, {x: 40, y: 40})
+                .addF
                 .addMove(1000, {x: 80, y: 0})
                 .addMove(2000, {x: 40, y: -40})
                 //.addMove(200, {x: 0, y: 0});
