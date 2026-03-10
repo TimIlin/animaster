@@ -61,7 +61,9 @@ function addListeners() {
             const customAnimation = animaster()
                 .addMove(2000, {x: 40, y: 40})
                 .addMove(1000, {x: 80, y: 0})
+                .addFadeOut(100)
                 .addMove(2000, {x: 40, y: -40})
+                .addFadeIn(1000)
                 .addMove(200, {x: 0, y: 0});
             customAnimation.play(block);
         });
@@ -157,11 +159,39 @@ function animaster(){
         },
 
         addMove(duration, transition) {
-            ////console.log(this)
             steps.push({
                 func: function(element) {
                     this.move(element, duration, transition)
-                    ////console.log(duration)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        addScale(duration, ratio) {
+            steps.push({
+                func: function(element) {
+                    this.scale(element, duration, ratio)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        addFadeIn(duration) {
+            steps.push({
+                func: function(element) {
+                    this.fadeIn(element, duration)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        addFadeOut(duration) {
+            steps.push({
+                func: function(element) {
+                    this.fadeOut(element, duration)
                 }.bind(this),
                 duration: duration
             });
@@ -169,10 +199,8 @@ function animaster(){
         },
 
         play(element) {
-            //console.log(steps)
             let duration = 0;
             for (const step of steps) {
-                //console.log(duration)
                 setTimeout(() => step.func(element), duration)
                 duration += step.duration;
             }
