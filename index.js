@@ -51,9 +51,19 @@ function addListeners() {
         });
     document.getElementById('heartBeatingStop')
         .addEventListener('click', function () {
-            // const block = document.getElementById('heartBeatingBlock');
+            const block = document.getElementById('heartBeatingBlock');
             heartBeatingStopper.stop();
             heartBeatingStopper = undefined;
+        });
+    document.getElementById('superPlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('superBlock');
+            const customAnimation = animaster()
+                .addMove(2000, {x: 40, y: 40})
+                .addMove(1000, {x: 80, y: 0})
+                .addMove(2000, {x: 40, y: -40})
+                //.addMove(200, {x: 0, y: 0});
+            customAnimation.play(block);
         });
 }
 
@@ -74,6 +84,7 @@ function animaster(){
             element.style.transform = null;
         }
     }
+    const steps = [];
     return {
         /**
          * Блок плавно появляется из прозрачного.
@@ -99,6 +110,7 @@ function animaster(){
          * @param translation — объект с полями x и y, обозначающими смещение блока
          */
         move(element, duration, translation) {
+            console.log(duration, translation)
             element.style.transitionDuration = `${duration}ms`;
             element.style.transform = getTransform(translation, null);
         },
@@ -142,7 +154,29 @@ function animaster(){
                     clearInterval(timerId);
                 }
             }
-        }
+        },
+
+        addMove(duration, transition) {
+            //console.log(this)
+            steps.push({
+                func: function(element) {
+                    this.move(element, duration, transition)
+                    //console.log(duration)
+                }.bind(this),
+                duration: duration
+            });
+            return this;
+        },
+
+        play(element) {
+            console.log(steps)
+            let duration = 0;
+            for (step of steps) {
+                console.log(duration)
+                setTimeout(() => step.func(element), duration)
+                duration += step.duration;
+            }
+        },
     }
 }
 
