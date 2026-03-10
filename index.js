@@ -67,7 +67,7 @@ function addListeners() {
             .addFadeIn(1000)
             .addMove(200, {x: 0, y: 0});
 
-            superStopper = customAnimation.play(block);
+            superStopper = customAnimation.play(block, true);
         });
     document.getElementById('superStop')
         .addEventListener('click', function () {
@@ -236,8 +236,9 @@ function animaster(){
                     for (const step of steps) {
                         //console.log(duration)
                         timeoutIds.push(setTimeout(() => step.func(element), duration));
+                        duration += step.duration;
                     }
-                }, duration)
+                }, 0)
             }
             return {
                 stop() {
