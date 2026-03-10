@@ -4,6 +4,7 @@ function addListeners() {
     const anim = animaster();
     let heartBeatingStopper;
     let moveAndHideStopper;
+    let superStopper;
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
@@ -62,8 +63,14 @@ function addListeners() {
                 .addMove(2000, {x: 40, y: 40})
                 .addMove(1000, {x: 80, y: 0})
                 .addMove(2000, {x: 40, y: -40})
-                .addMove(200, {x: 0, y: 0});
-            customAnimation.play(block);
+                //.addMove(200, {x: 0, y: 0});
+            superStopper = customAnimation.play(block);
+        });
+    document.getElementById('superStop')
+        .addEventListener('click', function () {
+            //const block = document.getElementById('superBlock');
+            superStopper.stop();
+            superStopper = undefined;
         });
 }
 
@@ -170,11 +177,31 @@ function animaster(){
 
         play(element) {
             //console.log(steps)
+            const orig = element.cloneNode(true);
+            //const origStyles = structuredClone(element.style);
+            const wasHidden = element.style.hide === null;
+            const timeoutIds = [];
             let duration = 0;
             for (const step of steps) {
                 //console.log(duration)
-                setTimeout(() => step.func(element), duration)
+                timeoutIds.push(setTimeout(() => step.func(element), duration));
                 duration += step.duration;
+            }
+            return {
+                stop() {
+                    //element = orig;
+                    //element.style = origStyles;
+                    for (const timeoutId of timeoutIds) {
+                        clearTimeout(timeoutId);
+                    }
+                    resetter.resetMoveAndScale(element);
+                    if (wasHidden) {
+                        resetter.resetFadeIn();
+                    }
+                    else {
+                        //resetter.resetFadeOut();
+                    }
+                }
             }
         },
     }
